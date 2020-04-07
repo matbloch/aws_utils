@@ -81,10 +81,13 @@ class CloudWatchMetric:
     To avoid conflicts with AWS service namespaces, you should not specify a namespace that begins with AWS/
     """
 
-    __namespace = "CUSTOM/metrics"
+    __namespace = None
+    client = None
 
-    def __init__(self):
-        self.client = client = boto3.client("cloudwatch")
+    def __init__(self, namespace: str = "CUSTOM/metrics"):
+        if not self.client:
+            self.__namespace = namespace
+            self.client = boto3.client("cloudwatch")
 
     def submit(
         self,
@@ -149,4 +152,4 @@ class CloudWatchMetric:
 
 if __name__ == "__main__":
     cw = CloudWatchMetric()
-    cw.submit("MyCustomMetric", 1500.1337, [MetricDimension("API_VERSION", "0.0.BETA")])
+    cw.submit("MyCustomMetric", 1500.1337, dimensions=[MetricDimension("API_VERSION", "0.0.BETA")])
