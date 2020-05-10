@@ -84,10 +84,14 @@ class CloudWatchMetric:
     __namespace = None
     client = None
 
-    def __init__(self, namespace: str = "CUSTOM/metrics"):
+    def __init__(
+        self, endpoint_url=None, region="us-east-2", namespace: str = "CUSTOM/metrics"
+    ):
         if not self.client:
             self.__namespace = namespace
-            self.client = boto3.client("cloudwatch")
+            self.client = boto3.client(
+                "cloudwatch", endpoint_url=endpoint_url, region=region
+            )
 
     def submit(
         self,
@@ -152,4 +156,8 @@ class CloudWatchMetric:
 
 if __name__ == "__main__":
     cw = CloudWatchMetric()
-    cw.submit("MyCustomMetric", 1500.1337, dimensions=[MetricDimension("API_VERSION", "0.0.BETA")])
+    cw.submit(
+        "MyCustomMetric",
+        1500.1337,
+        dimensions=[MetricDimension("API_VERSION", "0.0.BETA")],
+    )
